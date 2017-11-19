@@ -1,33 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <title></title>
-
-    <meta charset="UTF-8">
-    <meta name="description" content="">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
-<body>
-    <p>welcome to the chat app</p>
 
-    <form id="message-form">
-        <textarea name="message" id="message-field" cols="30" rows="5" placeholder="type in something"></textarea><br>
-        <button>send</button>
-    </form>
+<body class="chat">
 
-    <button id="send-locations">send location</button>
-
-    <hr>
-
-    <div id="message-container">
-
+    <div class="chat__sidebar">
+        <h3>People</h3>
+        <div id="users"></div>
     </div>
-    
-    <script src="/socket.io/socket.io.js"></script>
-    <script
-            src="https://code.jquery.com/jquery-3.2.1.min.js"
-            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-            crossorigin="anonymous"></script>
-    
-    <script src="/js/main.js"></script>
+
+    <div class="chat__main">
+        <ol id="messages" class="chat__messages"></ol>
+
+        <div class="chat__footer">
+            <form id="message-form">
+                <input name="message" type="text" placeholder="Message" autofocus autocomplete="off"/>
+                <button>Send</button>
+            </form>
+            <button id="send-location">Send location</button>
+        </div>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script
+                src="https://code.jquery.com/jquery-3.2.1.min.js"
+                integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+                crossorigin="anonymous"></script>
+
+        <script src="/js/main.js"></script>
+    </div>
 </body>
+
 </html>

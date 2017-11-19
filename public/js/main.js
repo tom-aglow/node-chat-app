@@ -1,52 +1,60 @@
-const socket = io();
+var socket = io();
 
-socket.on('connect', () => {
-  console.log('hi server!');
+socket.on('connect', function () {
+  console.log('Connected to server');
 });
 
-socket.on('disconnect', () => {
-  console.log('bye server!');
+socket.on('disconnect', function () {
+  console.log('Disconnected from server');
 });
 
-socket.on('newMessage', msg => {
-  console.log('new message: ', msg);
-  const p = $('#message-container').prepend(`<p>${msg.from}: ${msg.text}</p>`)
+socket.on('newMessage', function (message) {
+  console.log('newMessage', message);
+  var li = jQuery('<li></li>');
+  li.text(`${message.from}: ${message.text}`);
+
+  jQuery('#messages').append(li);
 });
 
-socket.on('newLocationMessage', ({from, url}) => {
-  console.log('new message: ', {from, url});
-  const a = $('#message-container').prepend(`<a href="${url}" target="_blank">${from} shared his location</a>`)
+socket.on('newLocationMessage', function (message) {
+  var li = jQuery('<li></li>');
+  var a = jQuery('<a target="_blank">My current location</a>');
+
+  li.text(`${message.from}: `);
+  a.attr('href', message.url);
+  li.append(a);
+  jQuery('#messages').append(li);
 });
 
-$('#message-form').on('submit', event => {
-  event.preventDefault();
+jQuery('#message-form').on('submit', function (e) {
+  e.preventDefault();
 
-  socket.emit(
-    'createMessage',
-    {
-      from: 'user',
-      text: $('#message-field').val()
-    },
-    data => {
-      console.log('got it: ', data);
-    }
-  );
+  var messageTextbox = jQuery('[name=message]');
+
+  socket.emit('createMessage', {
+    from: 'User',
+    text: messageTextbox.val()
+  }, function () {
+    messageTextbox.val('')
+  });
 });
 
-
-const locationBtn = $('#send-locations');
-
-locationBtn.click(() => {
+var locationButton = jQuery('#send-location');
+locationButton.on('click', function () {
   if (!navigator.geolocation) {
-    return alert('geolocation not supported by your browser');
+    return alert('Geolocation not supported by your browser.');
   }
-  
-  navigator.geolocation.getCurrentPosition((pos) => {
+
+  locationButton.attr('disabled', 'disabled').text('Sending location...');
+
+  navigator.geolocation.getCurrentPosition(function (position) {
+    locationButton.removeAttr('disabled').text('Send location');
     socket.emit('createLocationMessage', {
-      lat: pos.coords.latitude,
-      lng: pos.coords.longitude,
+      lat: position.coords.latitude,
+      lng: position.coords.longitude
     });
-  }, () => {
-    alert('unable to fetch location');
-  })
-})
+  }, function () {
+    locationButton.removeAttr('disabled').text('Send location');
+    alert('Unable to fetch location.');
+  });
+});
