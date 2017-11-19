@@ -22,11 +22,13 @@ io.on('connection', socket => {
   socket.broadcast.emit('newMessage', generateMessage('admin', 'new user joined'));
 
   //  NEW MESSAGE FROM USER
-  socket.on('createMessage', msg => {
+  socket.on('createMessage', (msg, callback) => {
     console.log('create message: ', msg);
     io.emit('newMessage', generateMessage(msg.from, msg.text));
+    callback('this is from s');
   });
 
+  //  DISCONNECT
   socket.on('disconnect', () => {
     console.log('bye client');
   });

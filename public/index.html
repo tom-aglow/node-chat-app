@@ -8,7 +8,24 @@
 </head>
 <body>
     <p>welcome to the chat app</p>
+
+    <form id="message-form">
+        <textarea name="message" id="message-field" cols="30" rows="5" placeholder="type in something"></textarea><br>
+        <button>send</button>
+    </form>
+
+    <hr>
+
+    <div id="message-container">
+
+    </div>
+    
     <script src="/socket.io/socket.io.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+    
     <script src="/js/main.js"></script>
 </body>
 </html>
