@@ -4,6 +4,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 
 const { generateMessage, generateLocationMessage } = require('./utils/message');
+const { isRealString } = require('./utils/validation');
 
 const publicPath = path.join(__dirname, '../public');
 const app = express();
@@ -16,13 +17,28 @@ app.use(express.static(publicPath));
 io.on('connection', socket => {
   console.log('hi there');
 
-  //  GREETING MESSAGES
-  socket.emit('newMessage', generateMessage('admin', 'welcome to the chat'));
+  //  USER JOIN THE ROOM
+  socket.on('join', ({name, room}, callback) => {
 
-  socket.broadcast.emit(
-    'newMessage',
-    generateMessage('admin', 'new user joined')
-  );
+    //  HANDLE CASE IF ROOM OR USERNAME IS INVALID
+    if (!isRealString(name) || !isRealString(room)) {
+      callback('name and room name are required');
+    }
+
+    //  JOIN THE ROOM
+    socket.join(room);
+
+    //  GREETING MESSAGES
+    socket.emit('newMessage', generateMessage('admin', 'welcome to the chat'));
+
+    socket.broadcast.to(room).emit(
+      'newMessage',
+      generateMessage('admin', `${name} has joined`)
+    );
+
+
+    callback();
+  });
 
   //  NEW MESSAGE FROM USER
   socket.on('createMessage', (msg, callback) => {
