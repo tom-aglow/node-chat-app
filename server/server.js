@@ -22,9 +22,15 @@ io.on('connection', socket => {
   //  USER JOIN THE ROOM
   socket.on('join', ({name, room}, callback) => {
 
-    //  HANDLE CASE IF ROOM OR USERNAME IS INVALID
+    room = room.toLowerCase();
+
+    //  HANDLE CASE IF ROOM OR USERNAME IS INVALID OR NAME IS TAKEN
     if (!isRealString(name) || !isRealString(room)) {
       return callback('name and room name are required');
+    }
+
+    if (users.isNameTaken(name, room)) {
+      return callback('name is already taken, please choose another one');
     }
 
     //  JOIN THE ROOM
@@ -35,11 +41,11 @@ io.on('connection', socket => {
     io.to(room).emit('updateUserList', users.getUserList(room));
 
     //  GREETING MESSAGES
-    socket.emit('newMessage', generateMessage('admin', 'welcome to the chat'));
+    socket.emit('newMessage', generateMessage('', 'welcome to the chat'));
 
     socket.broadcast.to(room).emit(
       'newMessage',
-      generateMessage('admin', `${name} has joined`)
+      generateMessage('', `${name} has joined`)
     );
 
 
@@ -72,7 +78,7 @@ io.on('connection', socket => {
 
     if (user) {
       io.to(user.room).emit('updateUserList', users.getUserList(user.room));
-      io.to(user.room).emit('newMessage', generateMessage('admin', `${user.name} has left`));
+      io.to(user.room).emit('newMessage', generateMessage('', `${user.name} has left`));
     }
   });
 });

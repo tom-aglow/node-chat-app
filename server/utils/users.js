@@ -28,6 +28,10 @@ class Users {
       .filter(user => user.room === room)
       .map(user => user.name);
   }
+
+  isNameTaken(name, room) {
+    return this.users.filter(user => user.name === name && user.room === room).length > 0
+  }
 }
 
 module.exports = { Users };

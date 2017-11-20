@@ -79,4 +79,11 @@ describe('Users', () => {
 
     expect(userList).toEqual(['Jen']);
   });
+
+  it('should allow to connect to a room if user with the same name already exist', () => {
+    const name = 'Mike';
+    const room = 'Node Course';
+
+    expect(users.isNameTaken(name, room)).toBe(true);
+  })
 });
