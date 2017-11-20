@@ -47,15 +47,23 @@ io.on('connection', socket => {
   });
 
   //  NEW MESSAGE FROM USER
-  socket.on('createMessage', (msg, callback) => {
-    console.log('create message: ', msg);
-    io.emit('newMessage', generateMessage(msg.from, msg.text));
-    callback('this is from s');
+  socket.on('createMessage', ({text}, callback) => {
+    const user = users.getUser(socket.id);
+
+    if (user && isRealString(text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name, text));
+    }
+
+    callback();
   });
 
   //  LOCATION SHARING
   socket.on('createLocationMessage', coords => {
-    io.emit('newLocationMessage', generateLocationMessage('admin', coords));
+    const user = users.getUser(socket.id);
+
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords));
+    }
   });
 
   //  DISCONNECT
